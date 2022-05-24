@@ -3,8 +3,9 @@
 window.addEventListener('load', () => {
     var viewerContainer = document.createElement('div');
     viewerContainer.id = 'viewer';
-    viewerContainer.style.width = window.innerWidth + 'px';
-    viewerContainer.style.height = window.innerHeight + 'px';
+    var screenDims = { width: window.outerWidth, height: window.outerHeight };
+    viewerContainer.style.width = window.outerWidth + 'px';
+    viewerContainer.style.height = window.outerHeight + 'px';
     document.body.appendChild(viewerContainer);
     var imageDimensions = {width:8000, height:4406};
     var viewer = OpenSeadragon({
@@ -30,13 +31,16 @@ window.addEventListener('load', () => {
         }],
         showNavigator: true,
         navigatorPosition: 'BOTTOM_RIGHT',
-        sequenceControlAnchor: 'TOP_RIGHT'
+        sequenceControlAnchor: 'TOP_RIGHT',
+        navigatorWidth: (screenDims/3),
+        navigatorHeight: (screenDims/3)*(imageDimensions.width/imageDimensions.height),
+        autoHideControls: false
     });
 
-    var link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'main.css';
-    document.head.appendChild(link);
+    var styles = document.createElement('link');
+    styles.rel = 'stylesheet';
+    styles.href = 'main.css';
+    document.head.appendChild(styles);
     viewer.addHandler('full-screen', (e) => {
         console.log(e.fullScreen);
     });
