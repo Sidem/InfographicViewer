@@ -7,22 +7,47 @@ function toggleAnnotation(id) {
     }
 }
 
-async function getImageDimensionsFromPropertiesXML() { 
-    const response = await fetch("tiles/ImageProperties.xml");
+function isMobile() {
+    return ('ontouchstart' in document.documentElement && navigator.userAgent.match(/Mobi/));
+}
+
+async function getImageDimensionsFromPropertiesXML(propertiesFile) { 
+    const response = await fetch(propertiesFile);
     const data = await response.text();
     const image_properties = (new DOMParser()).parseFromString(data, 'text/xml').getElementsByTagName("IMAGE_PROPERTIES")[0];
     return {width:parseInt(image_properties.getAttribute('WIDTH')), height:parseInt(image_properties.getAttribute('HEIGHT'))};
 }
 
+async function loadAnnotations() {
+    const response = await fetch("annotations.json");
+    const data = await response.text();
+    return JSON.parse(data).annotations;
+}
+
+function prepareOverlays(annotations, imageDimensions) { 
+    var overlays = [];
+    const imageRatio = imageDimensions.width / imageDimensions.height;
+    for(var i = 0; i < annotations.length; i++) {
+        var annotation = annotations[i];
+        overlays.push({
+            id: "annotation-"+i,
+            x: (annotation.x/imageDimensions.width)-0.0025,
+            y: (annotation.y/(imageDimensions.height*imageRatio))-0.0025,
+            width: 0.005,
+            height: 0.005,
+            className: 'annotation'
+        });
+    }
+    return overlays;
+}
+
 window.addEventListener('load', async () => {
-    const viewerContainer = document.createElement('div');
-    viewerContainer.id = 'viewer';
-    const isMobile = ('ontouchstart' in document.documentElement && navigator.userAgent.match(/Mobi/));
-    const screenDims = isMobile ? { width: window.outerWidth, height: window.outerHeight } : { width: window.innerWidth, height: window.innerHeight };
+    const viewerContainer = document.getElementById('viewer');
+    const screenDims = isMobile() ? { width: window.outerWidth, height: window.outerHeight } : { width: window.innerWidth, height: window.innerHeight };
     Object.assign(viewerContainer.style, { width: screenDims.width + 'px', height: screenDims.height + 'px' });
-    document.body.appendChild(viewerContainer);
-    var imageDimensions = await getImageDimensionsFromPropertiesXML();
-    console.log(imageDimensions);
+    var imageDimensions = await getImageDimensionsFromPropertiesXML("tiles/ImageProperties.xml");
+    const annotations = await loadAnnotations();
+    const overlays = prepareOverlays(annotations, imageDimensions)
     var viewer = OpenSeadragon({
         id: "viewer",
         prefixUrl: "images/",
@@ -36,20 +61,12 @@ window.addEventListener('load', async () => {
             tileSize: 256,
             fileFormat: 'jpg'	
         }],
-        overlays: [{
-            id: 'example-overlay',
-            x: 0.13,
-            y: 0.15,
-            width: 0.02,
-            height: 0.02,
-            className: 'annotation'
-        }],
+        overlays: overlays,
         showNavigator: true,
         navigatorPosition: 'BOTTOM_RIGHT',
         sequenceControlAnchor: 'TOP_RIGHT',
         autoHideControls: false
     });
-    console.dir(viewer);
     const styles = document.createElement('link');
     Object.assign(styles, { rel: 'stylesheet', href: 'main.css' });
     document.head.appendChild(styles);
@@ -60,12 +77,11 @@ window.addEventListener('load', async () => {
         var clickedAnnotation = (event.originalTarget.className == 'annotation');
         if (clickedAnnotation) {
             event.preventDefaultAction = true;
-            console.log(event.originalTarget.id);
-            toggleAnnotation(event.originalTarget.id);
+            //toggleAnnotation(event.originalTarget.id);
         }
         var webPoint = event.position;
         var viewportPoint = viewer.viewport.pointFromPixel(webPoint);
         var imagePoint = viewer.viewport.viewportToImageCoordinates(viewportPoint);
-        console.log(webPoint.toString(), viewportPoint.toString(), imagePoint.x/imageDimensions.width, imagePoint.y/imageDimensions.width);
+        console.log(imagePoint.toString(), viewportPoint.toString(), imagePoint.x/imageDimensions.width, imagePoint.y/imageDimensions.width);
     });
 });
