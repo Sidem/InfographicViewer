@@ -1,3 +1,5 @@
+const overlaySize = 0.005;
+
 function toggleAnnotation(id) {
     var annotation = document.getElementById(id+"-body");
     if (annotation.style.display == 'block') {
@@ -24,19 +26,23 @@ async function loadAnnotations() {
     return JSON.parse(data).annotations;
 }
 
-function prepareOverlays(annotations, imageDimensions) { 
+function loadOverlays(annotations, imageDimensions) {
     var overlays = [];
     const imageRatio = imageDimensions.width / imageDimensions.height;
     for(var i = 0; i < annotations.length; i++) {
         var annotation = annotations[i];
         overlays.push({
             id: "annotation-"+i,
-            x: (annotation.x/imageDimensions.width)-0.0025,
-            y: (annotation.y/(imageDimensions.height*imageRatio))-0.0025,
-            width: 0.005,
-            height: 0.005,
+            x: (annotation.x/imageDimensions.width)-(overlaySize/2),
+            y: (annotation.y/(imageDimensions.height*imageRatio))-(overlaySize/2),
+            width: overlaySize,
+            height: overlaySize,
             className: 'annotation'
         });
+        window.localStorage.setItem("annotation-"+i, JSON.stringify({
+            title: annotation.title,
+            body: annotation.body
+        }));
     }
     return overlays;
 }
@@ -47,7 +53,7 @@ window.addEventListener('load', async () => {
     Object.assign(viewerContainer.style, { width: screenDims.width + 'px', height: screenDims.height + 'px' });
     var imageDimensions = await getImageDimensionsFromPropertiesXML("tiles/ImageProperties.xml");
     const annotations = await loadAnnotations();
-    const overlays = prepareOverlays(annotations, imageDimensions)
+    const overlays = loadOverlays(annotations, imageDimensions);
     var viewer = OpenSeadragon({
         id: "viewer",
         prefixUrl: "images/",

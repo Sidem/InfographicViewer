@@ -12,10 +12,10 @@ body {
     border: #0044ff 2px solid;
     border-radius: 50%;
     background-color: #ffffff;
-    opacity: 0.3;
+    opacity: 0.5;
 }
 .annotation:hover {
-    opacity: 0.8;
+    opacity: 0.9;
 }
 .sidebar {
     position: fixed;
