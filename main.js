@@ -1,13 +1,28 @@
+function toggleAnnotation(id) {
+    var annotation = document.getElementById(id+"-body");
+    if (annotation.style.display == 'block') {
+        annotation.style.display = 'none';
+    } else {
+        annotation.style.display = 'block';
+    }
+}
 
+async function getImageDimensionsFromPropertiesXML() { 
+    const response = await fetch("tiles/ImageProperties.xml");
+    const data = await response.text();
+    const image_properties = (new DOMParser()).parseFromString(data, 'text/xml').getElementsByTagName("IMAGE_PROPERTIES")[0];
+    return {width:parseInt(image_properties.getAttribute('WIDTH')), height:parseInt(image_properties.getAttribute('HEIGHT'))};
+}
 
-window.addEventListener('load', () => {
-    var viewerContainer = document.createElement('div');
+window.addEventListener('load', async () => {
+    const viewerContainer = document.createElement('div');
     viewerContainer.id = 'viewer';
-    var screenDims = { width: window.outerWidth, height: window.outerHeight };
-    viewerContainer.style.width = window.outerWidth + 'px';
-    viewerContainer.style.height = window.outerHeight + 'px';
+    const isMobile = ('ontouchstart' in document.documentElement && navigator.userAgent.match(/Mobi/));
+    const screenDims = isMobile ? { width: window.outerWidth, height: window.outerHeight } : { width: window.innerWidth, height: window.innerHeight };
+    Object.assign(viewerContainer.style, { width: screenDims.width + 'px', height: screenDims.height + 'px' });
     document.body.appendChild(viewerContainer);
-    var imageDimensions = {width:8000, height:4406};
+    var imageDimensions = await getImageDimensionsFromPropertiesXML();
+    console.log(imageDimensions);
     var viewer = OpenSeadragon({
         id: "viewer",
         prefixUrl: "images/",
@@ -32,33 +47,25 @@ window.addEventListener('load', () => {
         showNavigator: true,
         navigatorPosition: 'BOTTOM_RIGHT',
         sequenceControlAnchor: 'TOP_RIGHT',
-        navigatorWidth: (screenDims/3),
-        navigatorHeight: (screenDims/3)*(imageDimensions.width/imageDimensions.height),
         autoHideControls: false
     });
-
-    var styles = document.createElement('link');
-    styles.rel = 'stylesheet';
-    styles.href = 'main.css';
+    console.dir(viewer);
+    const styles = document.createElement('link');
+    Object.assign(styles, { rel: 'stylesheet', href: 'main.css' });
     document.head.appendChild(styles);
     viewer.addHandler('full-screen', (e) => {
         console.log(e.fullScreen);
     });
     viewer.addHandler('canvas-click', function(event) {
-        console.log(event.originalTarget);
-        if (event.originalTarget.className == 'annotation') {
+        var clickedAnnotation = (event.originalTarget.className == 'annotation');
+        if (clickedAnnotation) {
             event.preventDefaultAction = true;
+            console.log(event.originalTarget.id);
+            toggleAnnotation(event.originalTarget.id);
         }
-        // The canvas-click event gives us a position in web coordinates.
         var webPoint = event.position;
-    
-        // Convert that to viewport coordinates, the lingua franca of OpenSeadragon coordinates.
         var viewportPoint = viewer.viewport.pointFromPixel(webPoint);
-    
-        // Convert from viewport coordinates to image coordinates.
         var imagePoint = viewer.viewport.viewportToImageCoordinates(viewportPoint);
-    
-        // Show the results.
         console.log(webPoint.toString(), viewportPoint.toString(), imagePoint.x/imageDimensions.width, imagePoint.y/imageDimensions.width);
     });
 });
