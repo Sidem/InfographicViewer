@@ -1,4 +1,10 @@
-const overlaySize = 0.005;
+const overlaySize = 0.012;
+
+function toggleNav() {
+    var newSize = (document.getElementById("sidebar").style.width != "250px") ? "250px" : "0px";
+    document.getElementById("sidebar").style.width = newSize;
+    document.getElementById("navToggle").style.paddingLeft = newSize;
+}
 
 function toggleAnnotation(id) {
     var annotation = document.getElementById(id+"-body");
@@ -49,7 +55,7 @@ function loadOverlays(annotations, imageDimensions) {
 
 window.addEventListener('load', async () => {
     const viewerContainer = document.getElementById('viewer');
-    const screenDims = isMobile() ? { width: window.outerWidth, height: window.outerHeight } : { width: window.innerWidth, height: window.innerHeight };
+    const screenDims = isMobile() ? { width: window.outerWidth, height: window.outerHeight-50 } : { width: window.innerWidth, height: window.innerHeight };
     Object.assign(viewerContainer.style, { width: screenDims.width + 'px', height: screenDims.height + 'px' });
     var imageDimensions = await getImageDimensionsFromPropertiesXML("tiles/ImageProperties.xml");
     const annotations = await loadAnnotations();

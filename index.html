@@ -1,22 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Dash Ecosystem - Interactive Infographic</title>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Dash Ecosystem - Interactive Infographic</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel="prefetch" href="tiles/ImageProperties.xml">
+    <link rel="stylesheet" href="semantic.min.css">
     <script src="openseadragon.min.js"></script>
     <script src='main.js'></script>
 </head>
     <body>
-        <nav class="sidebar">
+        <nav id="sidebar" class="sidebar">
             <div class="logoContainer">
                 <a>
                     <img class="logo" src="images/logo.png" alt="logo">
                 </a>
             </div>
+            <div class="sidebarLinkContainer">
+
+            </div>
         </nav>
+        <nav id="titlebar" class="titlebar">
+            <i class="bars icon" id="navToggle" onclick="toggleNav()"></i>
+            <span class="title">Dash Ecosystem</span>
+        </nav>
+            
         <div id="viewer">
 
         </div>

@@ -5,30 +5,52 @@ body {
     max-width: 100%;
 }
 #viewer {
+    /* margin-left: 250px; */
     position: relative;
     background-color: #343131;
 }
 .annotation {
-    border: #0044ff 2px solid;
+    border: #008de4 2px solid;
     border-radius: 50%;
     background-color: #ffffff;
-    opacity: 0.5;
+    opacity: 0.0;
 }
 .annotation:hover {
-    opacity: 0.9;
+    opacity: 0.7;
 }
 .sidebar {
+    opacity: 0.95;
     position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
+    z-index: 2;
     padding-bottom: 2em;
-    width: 300px;
+    width: 0px;
+    transition: width 0.5s;
     overflow-x: hidden;
     overflow-y: hidden;
     min-height: 100%;
     color: #9b9b9b;
     background: #343131;
+}
+.titlebar {
+    background: #008de4;
+    color: #ffffff;
+    text-align: center;
+    height: 50px;
+    line-height: 50px;
+    font-size: 25px;
+}
+.titlebar > i {
+    float:left;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: padding 0.5s;
+}
+.title {
+    font-size: 1.5em;
+    width: 100%;
 }
 
 .logoContainer {
