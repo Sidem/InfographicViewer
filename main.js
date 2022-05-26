@@ -1,9 +1,8 @@
 const overlaySize = 0.012;
-
-function toggleNav() {
+function toggleNav(container) {
     var newSize = (document.getElementById("sidebar").style.width != "250px") ? "250px" : "0px";
     document.getElementById("sidebar").style.width = newSize;
-    document.getElementById("navToggle").style.paddingLeft = newSize;
+    container.style.marginLeft = newSize;
 }
 
 function toggleAnnotation(id) {
@@ -53,9 +52,26 @@ function loadOverlays(annotations, imageDimensions) {
     return overlays;
 }
 
+function addHandlers(viewer, imageDimensions) {
+    viewer.addHandler('full-screen', (e) => {
+        console.log(e.fullScreen);
+    });
+    viewer.addHandler('canvas-click', function(event) {
+        var clickedAnnotation = (event.originalTarget.className == 'annotation');
+        if (clickedAnnotation) {
+            event.preventDefaultAction = true;
+            //toggleAnnotation(event.originalTarget.id);
+        }
+        var webPoint = event.position;
+        var viewportPoint = viewer.viewport.pointFromPixel(webPoint);
+        var imagePoint = viewer.viewport.viewportToImageCoordinates(viewportPoint);
+        console.log(imagePoint.toString(), viewportPoint.toString(), imagePoint.x/imageDimensions.width, imagePoint.y/imageDimensions.width);
+    });
+}
+
 window.addEventListener('load', async () => {
     const viewerContainer = document.getElementById('viewer');
-    const screenDims = isMobile() ? { width: window.outerWidth, height: window.outerHeight-50 } : { width: window.innerWidth, height: window.innerHeight };
+    const screenDims = isMobile() ? { width: window.outerWidth, height: window.outerHeight } : { width: window.innerWidth, height: window.innerHeight };
     Object.assign(viewerContainer.style, { width: screenDims.width + 'px', height: screenDims.height + 'px' });
     var imageDimensions = await getImageDimensionsFromPropertiesXML("tiles/ImageProperties.xml");
     const annotations = await loadAnnotations();
@@ -82,18 +98,19 @@ window.addEventListener('load', async () => {
     const styles = document.createElement('link');
     Object.assign(styles, { rel: 'stylesheet', href: 'main.css' });
     document.head.appendChild(styles);
-    viewer.addHandler('full-screen', (e) => {
-        console.log(e.fullScreen);
+    addHandlers(viewer, imageDimensions);
+    var toolbar = viewer.buttonGroup;
+    toolbar.element.classList.add("toolbar");
+    var customButton = new OpenSeadragon.Button({
+        srcRest: "images/bars_rest.png",
+        srcGroup: "images/bars_grouphover.png",
+        srcHover: "images/bars_hover.png",
+        srcDown: "images/bars_pressed.png",
+        fadeLength: 100,
+        tooltip: "Navigation",
+        onPress: () => {toggleNav(toolbar.element)}
     });
-    viewer.addHandler('canvas-click', function(event) {
-        var clickedAnnotation = (event.originalTarget.className == 'annotation');
-        if (clickedAnnotation) {
-            event.preventDefaultAction = true;
-            //toggleAnnotation(event.originalTarget.id);
-        }
-        var webPoint = event.position;
-        var viewportPoint = viewer.viewport.pointFromPixel(webPoint);
-        var imagePoint = viewer.viewport.viewportToImageCoordinates(viewportPoint);
-        console.log(imagePoint.toString(), viewportPoint.toString(), imagePoint.x/imageDimensions.width, imagePoint.y/imageDimensions.width);
-    });
+    toolbar.buttons.unshift(customButton);
+    toolbar.element.prepend(customButton.element);
+    console.log(viewer);
 });

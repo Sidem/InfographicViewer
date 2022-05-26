@@ -34,19 +34,8 @@ body {
     color: #9b9b9b;
     background: #343131;
 }
-.titlebar {
-    background: #008de4;
-    color: #ffffff;
-    text-align: center;
-    height: 50px;
-    line-height: 50px;
-    font-size: 25px;
-}
-.titlebar > i {
-    float:left;
-    margin-left: 10px;
-    cursor: pointer;
-    transition: padding 0.5s;
+.toolbar {
+    transition: margin-left 0.5s;
 }
 .title {
     font-size: 1.5em;
