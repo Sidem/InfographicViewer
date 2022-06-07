@@ -1,6 +1,7 @@
-const overlaySize = 0.012;
+const overlaySize = 0.018;
+const sidebarWidth = "300px";
 function toggleNav(container) {
-    var newSize = (document.getElementById("sidebar").style.width != "250px") ? "250px" : "0px";
+    var newSize = (document.getElementById("sidebar").style.width != sidebarWidth) ? sidebarWidth : "0px";
     document.getElementById("sidebar").style.width = newSize;
     container.style.marginLeft = newSize;
 }
@@ -31,6 +32,12 @@ async function loadAnnotations() {
     return JSON.parse(data).annotations;
 }
 
+function getOverlayBody(id) {
+    let data = JSON.parse(window.localStorage.getItem("annotation-"+id));
+    
+}
+
+//get type and add class
 function loadOverlays(annotations, imageDimensions) {
     var overlays = [];
     const imageRatio = imageDimensions.width / imageDimensions.height;
@@ -54,7 +61,12 @@ function loadOverlays(annotations, imageDimensions) {
 
 function addHandlers(viewer, imageDimensions) {
     viewer.addHandler('full-screen', (e) => {
-        console.log(e.fullScreen);
+        let sidebarToggleButton = document.getElementById("sidebar-toggle-button");
+        if(e.fullScreen) {
+            sidebarToggleButton.style.display = "none";
+        } else {
+            sidebarToggleButton.style.display = "inline-block";
+        }
     });
     viewer.addHandler('canvas-click', function(event) {
         var clickedAnnotation = (event.originalTarget.className == 'annotation');
@@ -72,7 +84,7 @@ function addHandlers(viewer, imageDimensions) {
 window.addEventListener('load', async () => {
     const viewerContainer = document.getElementById('viewer');
     const screenDims = isMobile() ? { width: window.outerWidth, height: window.outerHeight } : { width: window.innerWidth, height: window.innerHeight };
-    Object.assign(viewerContainer.style, { width: screenDims.width + 'px', height: screenDims.height + 'px' });
+    Object.assign(viewerContainer.style, { width: '100%', height: '100%' });//{ width: screenDims.width + 'px', height: screenDims.height + 'px' });
     var imageDimensions = await getImageDimensionsFromPropertiesXML("tiles/ImageProperties.xml");
     const annotations = await loadAnnotations();
     const overlays = loadOverlays(annotations, imageDimensions);
@@ -101,7 +113,7 @@ window.addEventListener('load', async () => {
     addHandlers(viewer, imageDimensions);
     var toolbar = viewer.buttonGroup;
     toolbar.element.classList.add("toolbar");
-    var customButton = new OpenSeadragon.Button({
+    var sidebarToggleButton = new OpenSeadragon.Button({
         srcRest: "images/bars_rest.png",
         srcGroup: "images/bars_grouphover.png",
         srcHover: "images/bars_hover.png",
@@ -110,7 +122,7 @@ window.addEventListener('load', async () => {
         tooltip: "Navigation",
         onPress: () => {toggleNav(toolbar.element)}
     });
-    toolbar.buttons.unshift(customButton);
-    toolbar.element.prepend(customButton.element);
-    console.log(viewer);
+    toolbar.buttons.unshift(sidebarToggleButton);
+    sidebarToggleButton.element.id = "sidebar-toggle-button";
+    toolbar.element.prepend(sidebarToggleButton.element);
 });
