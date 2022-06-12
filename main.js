@@ -6,17 +6,9 @@ function toggleNav(container) {
     container.style.marginLeft = newSize;
 }
 
-function toggleAnnotation(id) {
-    var annotation = document.getElementById(id+"-body");
-    if (annotation.style.display == 'block') {
-        annotation.style.display = 'none';
-    } else {
-        annotation.style.display = 'block';
-    }
-}
-
-function isMobile() {
-    return ('ontouchstart' in document.documentElement && navigator.userAgent.match(/Mobi/));
+function toggleAnnotation(on) {
+    var annotation = document.getElementById('annotation-toggle');
+    annotation.checked = (on) ? true : !annotation.checked;
 }
 
 async function getImageDimensionsFromPropertiesXML(propertiesFile) { 
@@ -25,36 +17,47 @@ async function getImageDimensionsFromPropertiesXML(propertiesFile) {
     const image_properties = (new DOMParser()).parseFromString(data, 'text/xml').getElementsByTagName("IMAGE_PROPERTIES")[0];
     return {width:parseInt(image_properties.getAttribute('WIDTH')), height:parseInt(image_properties.getAttribute('HEIGHT'))};
 }
+function loadAnnotationData(id) {
+    var annotationData = JSON.parse(window.localStorage.getItem(id));
+    var title = document.getElementById('annotation-title');
+    var body = document.getElementById('annotation-content');
+    title.innerText = annotationData.title;
+    body.innerHTML = annotationData.body;
+
+}
 
 async function loadAnnotations() {
     const response = await fetch("annotations.json");
-    const data = await response.text();
-    return JSON.parse(data).annotations;
+    var data = await response.text();
+    data = JSON.parse(data).annotations;
+    for(var i = 0; i < data.length; i++) {
+        window.localStorage.setItem("annotation-"+i, JSON.stringify(data[i]));
+    }
+    return data;
 }
 
-function getOverlayBody(id) {
-    let data = JSON.parse(window.localStorage.getItem("annotation-"+id));
-    
-}
-
-//get type and add class
-function loadOverlays(annotations, imageDimensions) {
+function addOverlays(annotations, imageDimensions, viewer) {
     var overlays = [];
     const imageRatio = imageDimensions.width / imageDimensions.height;
     for(var i = 0; i < annotations.length; i++) {
         var annotation = annotations[i];
-        overlays.push({
-            id: "annotation-"+i,
-            x: (annotation.x/imageDimensions.width)-(overlaySize/2),
-            y: (annotation.y/(imageDimensions.height*imageRatio))-(overlaySize/2),
-            width: overlaySize,
-            height: overlaySize,
-            className: 'annotation'
-        });
-        window.localStorage.setItem("annotation-"+i, JSON.stringify({
-            title: annotation.title,
-            body: annotation.body
-        }));
+        let annotationElement = document.createElement("a");
+        annotationElement.id = "annotation-"+i
+        annotationElement.classList.add("annotation");
+        if(annotation.type == 'link') {
+            annotationElement.classList.add("annotation-link");
+            annotationElement.href = annotation.link;
+            annotationElement.target = "_blank";
+            //annotationElement.innerText = annotation.title;
+        }
+        viewer.addOverlay(
+            annotationElement, 
+            new OpenSeadragon.Rect(
+                (annotation.x/imageDimensions.width)-(overlaySize/2), 
+                (annotation.y/(imageDimensions.height*imageRatio))-(overlaySize/2), 
+            overlaySize, 
+            overlaySize)
+        );
     }
     return overlays;
 }
@@ -62,17 +65,21 @@ function loadOverlays(annotations, imageDimensions) {
 function addHandlers(viewer, imageDimensions) {
     viewer.addHandler('full-screen', (e) => {
         let sidebarToggleButton = document.getElementById("sidebar-toggle-button");
-        if(e.fullScreen) {
-            sidebarToggleButton.style.display = "none";
-        } else {
-            sidebarToggleButton.style.display = "inline-block";
-        }
+        sidebarToggleButton.style.display = (e.fullScreen) ? "none" : "inline-block";
     });
     viewer.addHandler('canvas-click', function(event) {
-        var clickedAnnotation = (event.originalTarget.className == 'annotation');
-        if (clickedAnnotation) {
+        var clickedAnnotation = event.originalTarget;
+        var isAnnotation = clickedAnnotation.classList.contains("annotation");
+        var isLink = clickedAnnotation.classList.contains("annotation-link");
+        if (isAnnotation) {
+            if(isLink) {
+                if(confirm("You are about to open a new tab to:\n"+clickedAnnotation.href+"\nAre you sure?")) 
+                window.open(clickedAnnotation.href, '_blank').focus();
+            } else {
+                loadAnnotationData(clickedAnnotation.id);
+                toggleAnnotation(true);
+            }
             event.preventDefaultAction = true;
-            //toggleAnnotation(event.originalTarget.id);
         }
         var webPoint = event.position;
         var viewportPoint = viewer.viewport.pointFromPixel(webPoint);
@@ -81,36 +88,7 @@ function addHandlers(viewer, imageDimensions) {
     });
 }
 
-window.addEventListener('load', async () => {
-    const viewerContainer = document.getElementById('viewer');
-    const screenDims = isMobile() ? { width: window.outerWidth, height: window.outerHeight } : { width: window.innerWidth, height: window.innerHeight };
-    Object.assign(viewerContainer.style, { width: '100%', height: '100%' });//{ width: screenDims.width + 'px', height: screenDims.height + 'px' });
-    var imageDimensions = await getImageDimensionsFromPropertiesXML("tiles/ImageProperties.xml");
-    const annotations = await loadAnnotations();
-    const overlays = loadOverlays(annotations, imageDimensions);
-    var viewer = OpenSeadragon({
-        id: "viewer",
-        prefixUrl: "images/",
-        tileSources: [{
-            //required	
-            type:       "zoomifytileservice",
-            width:      imageDimensions.width,
-            height:     imageDimensions.height,
-            tilesUrl:   "tiles/",
-            //optional
-            tileSize: 256,
-            fileFormat: 'jpg'	
-        }],
-        overlays: overlays,
-        showNavigator: true,
-        navigatorPosition: 'BOTTOM_RIGHT',
-        sequenceControlAnchor: 'TOP_RIGHT',
-        autoHideControls: false
-    });
-    const styles = document.createElement('link');
-    Object.assign(styles, { rel: 'stylesheet', href: 'main.css' });
-    document.head.appendChild(styles);
-    addHandlers(viewer, imageDimensions);
+function initSidebarButton(viewer) {
     var toolbar = viewer.buttonGroup;
     toolbar.element.classList.add("toolbar");
     var sidebarToggleButton = new OpenSeadragon.Button({
@@ -125,4 +103,28 @@ window.addEventListener('load', async () => {
     toolbar.buttons.unshift(sidebarToggleButton);
     sidebarToggleButton.element.id = "sidebar-toggle-button";
     toolbar.element.prepend(sidebarToggleButton.element);
+}
+
+window.addEventListener('load', async () => {
+    var imageDimensions = await getImageDimensionsFromPropertiesXML("tiles/ImageProperties.xml");
+    var viewer = OpenSeadragon({
+        id: "viewer",
+        prefixUrl: "images/",
+        tileSources: [{
+            type:       "zoomifytileservice",
+            width:      imageDimensions.width,
+            height:     imageDimensions.height,
+            tilesUrl:   "tiles/",
+            tileSize: 256,
+            fileFormat: 'jpg'	
+        }],
+        showNavigator: true,
+        navigatorPosition: 'BOTTOM_RIGHT',
+        sequenceControlAnchor: 'TOP_RIGHT',
+        autoHideControls: false
+    });
+    const annotations = await loadAnnotations();
+    addOverlays(annotations, imageDimensions, viewer);
+    addHandlers(viewer, imageDimensions);
+    initSidebarButton(viewer)
 });

@@ -6,27 +6,38 @@
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel="prefetch" href="tiles/ImageProperties.xml">
+    <link rel="stylesheet" href="main.css">
     <script src="openseadragon.min.js"></script>
     <script src='main.js'></script>
 </head>
     <body>
         <nav id="sidebar" class="sidebar">
-            <div class="logoContainer">
+            <div class="logo-container">
                 <a>
                     <img class="logo" src="images/logo.png" alt="logo">
                 </a>
             </div>
-            <div class="sidebarLinkContainer">
+            <div class="sidebar-link-container">
 
             </div>
-            <div class="sidebarFooter">
+            <div class="sidebar-footer">
                 footer text
             </div>
         </nav>
             
         <div id="viewer">
-            <div id="annotationContainer">
-
+            <div id="annotation-container">
+                <input id="annotation-toggle" class="annotation-toggle" type="checkbox">
+                <div class="infobox annotation-body">
+                    <div>
+                        <h2 id="annotation-title"></h2>
+                        <div id="annotation-content"></div>
+                    </div>
+                    <hr/>
+                    <div class="annotation-btns">
+                        <label for="annotation-toggle" class="annotation-button">Close</label>
+                    </div>
+                </div>
             </div>
         </div>
     </body>

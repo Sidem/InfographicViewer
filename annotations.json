@@ -5,7 +5,7 @@
             "y": 1563.29,
             "type": "info",
             "title": "Annotation 4",
-            "body": "Annotation 4"
+            "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed imperdiet metus eget nunc euismod suscipit. Nullam a imperdiet urna, ac tempor tellus. Donec vitae sollicitudin leo, quis fringilla ligula. Pellentesque sodales felis lectus, non interdum lacus egestas vel. Fusce id finibus massa. Quisque tempor condimentum tellus eu scelerisque. Nunc bibendum consectetur sollicitudin. Sed lacinia venenatis libero, pretium egestas nisi finibus ut. <br/><br/>Vivamus suscipit pellentesque lorem, eget egestas lectus luctus eget. Nulla sit amet porta justo. Morbi sed lacus id dolor tempus accumsan. Morbi eros mauris, scelerisque ut justo at, euismod suscipit justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nullam sapien sapien, pharetra lacinia elit a, dignissim aliquet nibh. Vivamus vel bibendum tortor. Praesent ac ante at nulla scelerisque mattis. In ornare risus et ex molestie pharetra.<br/><br/>Nunc vulputate, massa quis iaculis efficitur, ex ex placerat ligula, vel rhoncus nisi lorem sed elit. Mauris vitae facilisis ligula. Ut egestas metus sed orci fringilla euismod. Nam quis nisl libero. Mauris ut est vel nunc egestas cursus nec quis urna. Proin scelerisque eros vel mauris feugiat, non blandit tortor finibus. Donec at mauris id arcu egestas tempor in sed est."
         },
         {
             "x": 2988.24,
@@ -19,8 +19,7 @@
             "y": 1250.56,
             "type": "link",
             "link": "https://www.google.com",
-            "title": "Annotation 6",
-            "body": "Annotation 6"
+            "title": "Annotation 6"
         }
     ]
 }
