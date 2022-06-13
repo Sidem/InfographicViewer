@@ -62,7 +62,19 @@ function addOverlays(annotations, imageDimensions, viewer) {
     return overlays;
 }
 
-function addHandlers(viewer, imageDimensions) {
+function getAnnotationString(x,y,title,content) {
+    var annotationString = "";
+    annotationString += "{\n";
+    annotationString += "\t\"x\": "+x+",\n";
+    annotationString += "\t\"y\": "+y+",\n";
+    annotationString += "\t\"type\": \"info\",\n";
+    annotationString += "\t\"title\": \""+title+"\",\n";
+    annotationString += "\t\"body\": \""+content+"\"\n";
+    annotationString += "}\n";
+    return annotationString;
+}
+
+function addHandlers(viewer) {
     viewer.addHandler('full-screen', (e) => {
         let sidebarToggleButton = document.getElementById("sidebar-toggle-button");
         sidebarToggleButton.style.display = (e.fullScreen) ? "none" : "inline-block";
@@ -71,6 +83,7 @@ function addHandlers(viewer, imageDimensions) {
         var clickedAnnotation = event.originalTarget;
         var isAnnotation = clickedAnnotation.classList.contains("annotation");
         var isLink = clickedAnnotation.classList.contains("annotation-link");
+        var annotationVisible = document.getElementById('annotation-toggle').checked;
         if (isAnnotation) {
             if(isLink) {
                 if(confirm("You are about to open a new tab to:\n"+clickedAnnotation.href+"\nAre you sure?")) 
@@ -80,11 +93,14 @@ function addHandlers(viewer, imageDimensions) {
                 toggleAnnotation(true);
             }
             event.preventDefaultAction = true;
+        } else if (annotationVisible) { 
+            toggleAnnotation(false);
+            event.preventDefaultAction = true;
         }
         var webPoint = event.position;
         var viewportPoint = viewer.viewport.pointFromPixel(webPoint);
         var imagePoint = viewer.viewport.viewportToImageCoordinates(viewportPoint);
-        console.log(imagePoint.toString(), viewportPoint.toString(), imagePoint.x/imageDimensions.width, imagePoint.y/imageDimensions.width);
+        console.log(getAnnotationString(parseInt(imagePoint.x),parseInt(imagePoint.y),"title","html-content"));
     });
 }
 
@@ -125,6 +141,6 @@ window.addEventListener('load', async () => {
     });
     const annotations = await loadAnnotations();
     addOverlays(annotations, imageDimensions, viewer);
-    addHandlers(viewer, imageDimensions);
+    addHandlers(viewer);
     initSidebarButton(viewer)
 });
