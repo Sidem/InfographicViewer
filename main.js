@@ -1,5 +1,6 @@
 const overlaySize = 0.018;
 const sidebarWidth = "300px";
+var ctrlPressed = false;
 function toggleNav(container) {
     var newSize = (document.getElementById("sidebar").style.width != sidebarWidth) ? sidebarWidth : "0px";
     document.getElementById("sidebar").style.width = newSize;
@@ -70,7 +71,7 @@ function getAnnotationString(x,y,title,content) {
     annotationString += "\t\"type\": \"info\",\n";
     annotationString += "\t\"title\": \""+title+"\",\n";
     annotationString += "\t\"body\": \""+content+"\"\n";
-    annotationString += "}\n";
+    annotationString += "},\n";
     return annotationString;
 }
 
@@ -84,6 +85,7 @@ function addHandlers(viewer) {
         var isAnnotation = clickedAnnotation.classList.contains("annotation");
         var isLink = clickedAnnotation.classList.contains("annotation-link");
         var annotationVisible = document.getElementById('annotation-toggle').checked;
+        
         if (isAnnotation) {
             if(isLink) {
                 if(confirm("You are about to open a new tab to:\n"+clickedAnnotation.href+"\nAre you sure?")) 
@@ -100,7 +102,11 @@ function addHandlers(viewer) {
         var webPoint = event.position;
         var viewportPoint = viewer.viewport.pointFromPixel(webPoint);
         var imagePoint = viewer.viewport.viewportToImageCoordinates(viewportPoint);
-        console.log(getAnnotationString(parseInt(imagePoint.x),parseInt(imagePoint.y),"title","html-content"));
+        if (window.event.ctrlKey) {
+            console.log("ctrl is pressed");
+            navigator.clipboard.writeText(getAnnotationString(parseInt(imagePoint.x),parseInt(imagePoint.y),"title","html-content"));
+            event.preventDefaultAction = true;
+        }
     });
 }
 
@@ -120,6 +126,17 @@ function initSidebarButton(viewer) {
     sidebarToggleButton.element.id = "sidebar-toggle-button";
     toolbar.element.prepend(sidebarToggleButton.element);
 }
+
+/*
+window.addEventListener('click', function(e) {
+    if (!e) e = window.event;
+    if (e.ctrlKey) {ctrlPressed = true}
+  });
+
+  window.addEventListener('keyup', function(e) {
+    if (!e) e = window.event;
+    if (e.ctrlKey) {console.log("ctrl released");}
+  });*/
 
 window.addEventListener('load', async () => {
     var imageDimensions = await getImageDimensionsFromPropertiesXML("tiles/ImageProperties.xml");
