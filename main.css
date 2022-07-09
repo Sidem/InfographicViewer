@@ -102,7 +102,8 @@ body {
     -webkit-transform: translate(-50%, -50%);
         -ms-transform: translate(-50%, -50%);
             transform: translate(-50%, -50%);
-    min-width: 400px;
+    min-width: 200px;
+    width: 70%;
     z-index: 1;
     box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
     -webkit-transition: visibility 0s .4s, opacity .4s 0s;
@@ -144,7 +145,8 @@ h2{
 #annotation-content{
     font-weight: bold;
     overflow-y: auto;
-    max-height: 16rem;
+    overflow-x: hidden;
+    /* max-height: 16rem; */
 }
 
 .annotation-button {

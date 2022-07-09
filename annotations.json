@@ -11,8 +11,8 @@
             "x": 2988.24,
             "y": 1384.2,
             "type": "info",
-            "title": "Annotation 5",
-            "body": "Annotation 5"
+            "title": "HTML content Demo",
+            "body": "<h1>This is heading 1</h1><h2>This is heading 2</h2><h3>This is heading 3</h3><br /><p>this is a paragraph</p><div>Div</div><img src=\"https://www.google.com/images/srpr/logo11w.png\">"
         },
         {
             "x": 3183.7,
