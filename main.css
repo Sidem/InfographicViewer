@@ -88,7 +88,7 @@ body {
     cursor: pointer;
 }
 
-.annotation-toggle{
+.annotation-toggle {
     display: none;
 }
 
@@ -107,6 +107,7 @@ body {
     box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
     -webkit-transition: visibility 0s .4s, opacity .4s 0s;
             transition: visibility 0s .4s, opacity .4s 0s;
+    max-height: 80%;
 }
 :checked + .infobox{
     visibility: visible;
@@ -133,10 +134,17 @@ h2{
     overflow: hidden;
     padding: 10px 20px;
 }
+
+@media only screen and (max-height: 600px) {
+    #annotation-content {
+        height: 8rem;
+    }
+}
+
 #annotation-content{
     font-weight: bold;
     overflow-y: auto;
-    max-height: 24rem;
+    max-height: 16rem;
 }
 
 .annotation-button {

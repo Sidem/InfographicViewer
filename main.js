@@ -127,17 +127,6 @@ function initSidebarButton(viewer) {
     toolbar.element.prepend(sidebarToggleButton.element);
 }
 
-/*
-window.addEventListener('click', function(e) {
-    if (!e) e = window.event;
-    if (e.ctrlKey) {ctrlPressed = true}
-  });
-
-  window.addEventListener('keyup', function(e) {
-    if (!e) e = window.event;
-    if (e.ctrlKey) {console.log("ctrl released");}
-  });*/
-
 window.addEventListener('load', async () => {
     var imageDimensions = await getImageDimensionsFromPropertiesXML("tiles/ImageProperties.xml");
     var viewer = OpenSeadragon({
