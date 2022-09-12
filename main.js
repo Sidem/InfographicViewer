@@ -1,4 +1,4 @@
-const overlaySize = 0.018;
+const overlaySize = 0.022;
 const sidebarWidth = "300px";
 var ctrlPressed = false;
 function toggleNav(container) {
