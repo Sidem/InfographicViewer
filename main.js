@@ -28,7 +28,8 @@ function loadAnnotationData(id) {
 }
 
 async function loadAnnotations() {
-    const response = await fetch("annotations.json");
+    let annotationFile = "annotations_"+localStorage.getItem("lang")+".json";
+    const response = await fetch(annotationFile);
     var data = await response.text();
     data = JSON.parse(data).annotations;
     for(var i = 0; i < data.length; i++) {
@@ -103,7 +104,6 @@ function addHandlers(viewer) {
         var viewportPoint = viewer.viewport.pointFromPixel(webPoint);
         var imagePoint = viewer.viewport.viewportToImageCoordinates(viewportPoint);
         if (window.event.ctrlKey) {
-            console.log("ctrl is pressed");
             navigator.clipboard.writeText(getAnnotationString(parseInt(imagePoint.x),parseInt(imagePoint.y),"title","html-content"));
             event.preventDefaultAction = true;
         }
@@ -127,7 +127,14 @@ function initSidebarButton(viewer) {
     toolbar.element.prepend(sidebarToggleButton.element);
 }
 
+async function reloadOverlays(imageDimensions, viewer) {
+    viewer.clearOverlays();
+    let annotations = await loadAnnotations();
+    addOverlays(annotations, imageDimensions, viewer);
+}
+
 window.addEventListener('load', async () => {
+    if(localStorage.getItem("lang") === null) localStorage.setItem("lang", "en");
     var imageDimensions = await getImageDimensionsFromPropertiesXML("tiles/ImageProperties.xml");
     var viewer = OpenSeadragon({
         id: "viewer",
@@ -145,8 +152,16 @@ window.addEventListener('load', async () => {
         sequenceControlAnchor: 'TOP_RIGHT',
         autoHideControls: false
     });
-    const annotations = await loadAnnotations();
+    let annotations = await loadAnnotations();
     addOverlays(annotations, imageDimensions, viewer);
     addHandlers(viewer);
-    initSidebarButton(viewer)
+    initSidebarButton(viewer);
+    document.getElementById('language').value = localStorage.getItem("lang");
+    document.getElementById('language').onchange = async (e) => {
+        let prev = localStorage.getItem("lang");
+        localStorage.setItem("lang", e.target.value);
+        if(prev != e.target.value) {
+            await reloadOverlays(imageDimensions, viewer);
+        }
+    };
 });
