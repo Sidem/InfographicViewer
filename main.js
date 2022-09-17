@@ -127,6 +127,19 @@ function initSidebarButton(viewer) {
     toolbar.element.prepend(sidebarToggleButton.element);
 }
 
+async function changeImage(viewer) {
+    let lang = localStorage.getItem("lang");
+    var imageDimensions = await getImageDimensionsFromPropertiesXML("tiles_"+lang+"/ImageProperties.xml");
+    viewer.open({
+        type:       "zoomifytileservice",
+        width:      imageDimensions.width,
+        height:     imageDimensions.height,
+        tilesUrl:   "tiles_"+lang+"/",
+        tileSize: 256,
+        fileFormat: 'jpg'	
+    });
+}
+
 async function reloadOverlays(imageDimensions, viewer) {
     viewer.clearOverlays();
     let annotations = await loadAnnotations();
@@ -135,7 +148,7 @@ async function reloadOverlays(imageDimensions, viewer) {
 
 window.addEventListener('load', async () => {
     if(localStorage.getItem("lang") === null) localStorage.setItem("lang", "en");
-    var imageDimensions = await getImageDimensionsFromPropertiesXML("tiles/ImageProperties.xml");
+    var imageDimensions = await getImageDimensionsFromPropertiesXML("tiles_"+localStorage.getItem("lang")+"/ImageProperties.xml");
     var viewer = OpenSeadragon({
         id: "viewer",
         prefixUrl: "images/",
@@ -143,7 +156,7 @@ window.addEventListener('load', async () => {
             type:       "zoomifytileservice",
             width:      imageDimensions.width,
             height:     imageDimensions.height,
-            tilesUrl:   "tiles/",
+            tilesUrl:   "tiles_"+localStorage.getItem("lang")+"/",
             tileSize: 256,
             fileFormat: 'jpg'	
         }],
@@ -161,6 +174,7 @@ window.addEventListener('load', async () => {
         let prev = localStorage.getItem("lang");
         localStorage.setItem("lang", e.target.value);
         if(prev != e.target.value) {
+            await changeImage(viewer);
             await reloadOverlays(imageDimensions, viewer);
         }
     };
