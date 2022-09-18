@@ -1,5 +1,3 @@
-const overlaySize = 0.022;
-const sidebarWidth = "300px";
 var ctrlPressed = false;
 function toggleNav(container) {
     var newSize = (document.getElementById("sidebar").style.width != sidebarWidth) ? sidebarWidth : "0px";
@@ -146,7 +144,18 @@ async function reloadOverlays(imageDimensions, viewer) {
     addOverlays(annotations, imageDimensions, viewer);
 }
 
+function loadLangs() {
+    let langSelector = document.getElementById("language");
+    for (let lang of langs) {
+        let item = document.createElement("option");
+        item.value = lang.code;
+        item.innerHTML = lang.name;
+        langSelector.appendChild(item);
+    }
+}
+
 window.addEventListener('load', async () => {
+    loadLangs();
     if(localStorage.getItem("lang") === null) localStorage.setItem("lang", "en");
     var imageDimensions = await getImageDimensionsFromPropertiesXML("tiles_"+localStorage.getItem("lang")+"/ImageProperties.xml");
     var viewer = OpenSeadragon({
