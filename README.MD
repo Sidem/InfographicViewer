@@ -17,7 +17,7 @@ Annotations have the following attributes:
 <li>link: URL to which the link annotation points (only applies for type "link")</li>
 </ul>
 <strong>
-TIP: To quickly get the coordinates of a point on the infographic hold ctrl and click. This will put an annotation snippet with the clicked coordinates into your clipboard ready to be pasted into the annotation file.</strong>
+TIP: To quickly get the coordinates of a point on the infographic hold ctrl and click. This will put a snippet with the clicked coordinates into your clipboard ready to be pasted into the annotation file. For a full annotation template with the right coordinates hold ctrl+shift and click.</strong>
 
 <h2>Adding another language</h2>
 To add another language you need to do three things:

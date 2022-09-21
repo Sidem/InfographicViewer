@@ -1,5 +1,3 @@
-var ctrlPressed = false;
-
 function toggleNav(container) {
     var newSize = (document.getElementById("sidebar").style.width != sidebarWidth) ? sidebarWidth : "0px";
     document.getElementById("sidebar").style.width = newSize;
@@ -74,6 +72,13 @@ function getAnnotationString(x, y, title, content) {
     return annotationString;
 }
 
+function getCoordString(x,y) {
+    var annotationString = "";
+    annotationString += "\"x\": " + x + ",\n";
+    annotationString += "\"y\": " + y + ",\n";
+    return annotationString;
+}
+
 function addHandlers(viewer) {
     viewer.addHandler('full-screen', (e) => {
         let sidebarToggleButton = document.getElementById("sidebar-toggle-button");
@@ -101,7 +106,11 @@ function addHandlers(viewer) {
         var webPoint = event.position;
         var viewportPoint = viewer.viewport.pointFromPixel(webPoint);
         var imagePoint = viewer.viewport.viewportToImageCoordinates(viewportPoint);
-        if (window.event.ctrlKey) {
+        if (window.event.ctrlKey && !window.event.shiftKey) {
+            navigator.clipboard.writeText(getCoordString(parseInt(imagePoint.x), parseInt(imagePoint.y)));
+            event.preventDefaultAction = true;
+        }
+        if (window.event.ctrlKey && window.event.shiftKey) {
             navigator.clipboard.writeText(getAnnotationString(parseInt(imagePoint.x), parseInt(imagePoint.y), "title", "html-content"));
             event.preventDefaultAction = true;
         }
