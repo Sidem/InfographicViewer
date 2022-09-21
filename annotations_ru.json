@@ -1,0 +1,25 @@
+{
+    "annotations": [
+        {
+            "x": 2904,
+            "y": 1563,
+            "type": "info",
+            "title": "Primer Bloque Presupuestario DAO SEP 07, 2015",
+            "body": "<p><span style='font-family: Tahoma,Geneva, sans-serif;'>El 7 de septiembre de 2015, se agregó el primer <strong>superbloque</strong> a la cadena de bloques de Dash en la altura 332320 ( </span><span style='font-family: Tahoma,Ginebra, sans-serif;'><a href='http://El 7 de septiembre de 2015, se agregó el primer super bloque a la cadena de bloques Dash en altura 332320 (https://tinyurl.com/bdffj9se). Por primera vez, les dio a los participantes de la red una opinión sobre cómo se asignan los fondos y marca el nacimiento de la primera Organización Autónoma Descentralizada (DAO) del mundo.' rel='noopener noreferrer' target='_blank'>https://tinyurl.com/bdffj9se</a></span><span style='font-family: Tahoma,Ginebra, sans-serif;'>).</span> </p><p><span style='font-family: Tahoma,Ginebra, sans-serif;'>Por primera vez, les dio a los participantes de la red una voz sobre cómo se asignan los fondos y marca el nacimiento del mundo&rsquo ;s primera <strong>Organización Autónoma Descentralizada</strong> (DAO).</span><br><img src='https://dashcontests.com/wp-content/uploads/2022/01/dash-platform-.jpg'></p>"
+        },
+        {
+            "x": 2988.24,
+            "y": 1384.2,
+            "type": "info",
+            "title": "HTML content Demo",
+            "body": "<h1>This is heading 1</h1><h2>This is heading 2</h2><h3>This is heading 3</h3><br /><p>this is a paragraph</p><div>Div</div><img src=\"https://www.google.com/images/srpr/logo11w.png\">"
+        },
+        {
+            "x": 3183.7,
+            "y": 1250.56,
+            "type": "link",
+            "link": "https://www.google.com",
+            "title": "Annotation 6"
+        }
+    ]
+}

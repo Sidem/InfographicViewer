@@ -9,4 +9,8 @@ const langs = [
         code: "es",
         name: "Spanish"
     },
+    {
+        code: "ru",
+        name: "Russian"
+    },
 ];
