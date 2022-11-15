@@ -1,6 +1,6 @@
 const overlaySize = 0.022;
 const sidebarWidth = "300px";
-const langs = [
+const LANGUAGES = [
     {
         code: "en",
         name: "English"

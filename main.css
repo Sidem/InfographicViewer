@@ -6,15 +6,30 @@ body {
     width: 100%;
     height: 100%;
 }
-#viewer {
-    /* margin-left: 250px; */
+.sidebar-item {
+    margin-top: 0.5rem;
+}
+
+.language-item {
+    cursor: pointer;
+}
+
+#lang-select {
     display: flex;
-  align-items: center;
-  justify-content: center;
+    align-items: center;
+    width: 100%;
+    justify-content: space-evenly;
+}
+
+#viewer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background-color: #343131;
     width: 100%; 
     height: 100%;
 }
+
 .annotation {
     border: #008de4 2px solid;
     border-radius: 50%;
@@ -30,6 +45,7 @@ body {
 .annotation:hover {
     opacity: 0.4;
 }
+
 .sidebar {
     opacity: 0.95;
     position: fixed;
@@ -46,11 +62,13 @@ body {
     color: #9b9b9b;
     background: #343131;
 }
+
 .toolbar {
     transition: margin-left 0.5s;
     background-color: rgba(0, 0, 0, 0.6) !important;
     height: 40px;
 }
+
 .title {
     font-size: 1.5em;
     width: 100%;
@@ -85,10 +103,8 @@ body {
     color: #ffffff;
     text-align: center;
 }
-#sidebar-toggle-button {
-    cursor: pointer;
-}
-#sidebar-toggle-button ~ div {
+
+#sidebar-toggle-button ~ div, #sidebar-toggle-button {
     cursor: pointer;
 }
 
@@ -121,8 +137,8 @@ body {
     border-radius: 5px;
     overflow: hidden;
     padding: 10px 20px;box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
-    
 }
+
 :checked + #annotation-body{
     visibility: visible;
     opacity: 1;
@@ -131,14 +147,15 @@ body {
             transition: visibility 0s 0s, opacity .4s .1s;
 }
 
-h1{
+h1 {
     font-weight: 300;
     width: 100%;
     background-color: rgb(64,81,181);
     color: rgb(255,255,255);
     padding: 20px 60px;
 }
-h2{
+
+h2 {
     font-weight: 400;
     margin-top: 0;
 }

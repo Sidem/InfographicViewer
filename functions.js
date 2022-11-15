@@ -85,6 +85,8 @@ function addHandlers(viewer) {
         sidebarToggleButton.style.display = (e.fullScreen) ? "none" : "inline-block";
     });
     viewer.addHandler('canvas-click', function (event) {
+        document.getElementById("sidebar").style.width = '0px';
+        document.getElementsByClassName("toolbar")[0].style.marginLeft = '0px';
         var clickedAnnotation = event.originalTarget;
         var isAnnotation = clickedAnnotation.classList.contains("annotation");
         var isLink = clickedAnnotation.classList.contains("annotation-link");
@@ -154,11 +156,16 @@ async function reloadOverlays(imageDimensions, viewer) {
 }
 
 function loadLangs() {
-    let langSelector = document.getElementById("language");
-    for (let lang of langs) {
-        let item = document.createElement("option");
-        item.value = lang.code;
-        item.innerHTML = lang.name;
-        langSelector.appendChild(item);
+    let langSelector = document.getElementById("lang-select");
+    for (let lang of LANGUAGES) {
+        let itemWrapper = document.createElement("a");
+        itemWrapper.href = window.location.href.split('?')[0]+'?lang='+lang.code;
+        let item = document.createElement("img");
+        item.src = 'flags/'+lang.code+'.webp';
+        item.alt = lang.name;
+        item.ariaValueText = lang.code;
+        itemWrapper.classList.add('language-item');
+        itemWrapper.appendChild(item);
+        langSelector.appendChild(itemWrapper);
     }
 }
