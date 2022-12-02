@@ -9,6 +9,28 @@ function toggleAnnotation(on) {
     annotation.checked = (on) ? true : !annotation.checked;
 }
 
+function initAnnotationDebugger(imageDimensions, viewer) {
+    let linkContainer = document.getElementById('sidebar-link-container');
+    let customAnnotationBtn = document.createElement('label');
+    customAnnotationBtn.id = "custom-annotation-input";
+    customAnnotationBtn.classList.add("sidebar-item");
+    customAnnotationBtn.innerHTML = "<span class=\"sidebar-option\">Custom Annotation File</span>";
+    let customAnnotationInput = document.createElement('input');
+    customAnnotationInput.style.display = "none";
+    customAnnotationInput.type = "file";
+    customAnnotationInput.accept = ".json";
+    customAnnotationInput.addEventListener('change', () => {
+        var fr = new FileReader();
+        fr.onload = async () => {
+            console.log(fr.result);
+            await reloadOverlays(imageDimensions, viewer, fr.result);
+        }
+        fr.readAsText(customAnnotationInput.files[0]);
+    });
+    customAnnotationBtn.appendChild(customAnnotationInput);
+    linkContainer.appendChild(customAnnotationBtn);
+}
+
 async function getImageDimensionsFromPropertiesXML(propertiesFile) {
     const response = await fetch(propertiesFile);
     const data = await response.text();
@@ -23,10 +45,13 @@ function loadAnnotationData(id) {
     body.innerHTML = annotationData.body;
 }
 
-async function loadAnnotations() {
+async function getAnnotationDataFromLangFile() {
     let annotationFile = "annotations_" + localStorage.getItem("lang") + ".json";
     const response = await fetch(annotationFile);
-    var data = await response.text();
+    return await response.text();
+}
+
+async function loadAnnotationDataIntoStorage(data) {
     data = JSON.parse(data).annotations;
     for (var i = 0; i < data.length; i++) {
         window.localStorage.setItem("annotation-" + i, JSON.stringify(data[i]));
@@ -149,9 +174,9 @@ async function changeImage(viewer) {
     });
 }
 
-async function reloadOverlays(imageDimensions, viewer) {
+async function reloadOverlays(imageDimensions, viewer, data) {
     viewer.clearOverlays();
-    let annotations = await loadAnnotations();
+    let annotations = await loadAnnotationDataIntoStorage(data);
     addOverlays(annotations, imageDimensions, viewer);
 }
 

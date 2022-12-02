@@ -5,6 +5,8 @@ window.addEventListener('load', async () => {
         localStorage.setItem("lang", "en");
     }
     if (urlParams.has('lang')) localStorage.setItem("lang", urlParams.get('lang'));
+    if (urlParams.has('debug')) localStorage.setItem("testenv", 1); 
+    else localStorage.setItem("testenv", 0);
     
     var imageDimensions = await getImageDimensionsFromPropertiesXML("tiles_" + localStorage.getItem("lang") + "/ImageProperties.xml");
     var viewer = OpenSeadragon({
@@ -23,7 +25,11 @@ window.addEventListener('load', async () => {
         sequenceControlAnchor: 'TOP_RIGHT',
         autoHideControls: false
     });
-    let annotations = await loadAnnotations();
+    if (localStorage.getItem("testenv") == 1)
+        initAnnotationDebugger(imageDimensions, viewer);
+        
+    var data = await getAnnotationDataFromLangFile();
+    let annotations = await loadAnnotationDataIntoStorage(data);
     addOverlays(annotations, imageDimensions, viewer);
     addHandlers(viewer);
     initSidebarButton(viewer);
@@ -34,7 +40,8 @@ window.addEventListener('load', async () => {
             localStorage.setItem("lang", e.target.ariaValueText);
             if (prev != e.target.ariaValueText) {
                 await changeImage(viewer);
-                await reloadOverlays(imageDimensions, viewer);
+                var data = await getAnnotationDataFromLangFile();
+                await reloadOverlays(imageDimensions, viewer, data);
             }
         };
     }
