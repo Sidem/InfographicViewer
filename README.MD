@@ -29,3 +29,10 @@ To add another language you need to do three things:
 <h2>Converting image to tiles</h2>
 <a href="http://www.zoomify.com/free.htm">Zoomify</a> allows you to quickly and easily turn a large image into a set of tiles, for alternative tools see: <a href="http://openseadragon.github.io/">openseadragon.github.io</a>.
 The code is currently only tested to work with a Zoomify tile source.
+
+<h2>Debug Mode</h2>
+To test custom Annotation files you can enter the debug mode by adding the <a href="https://en.wikipedia.org/wiki/Query_string">query parameter</a> debug=1 to the URL.
+In debug mode, a Button to upload your custom Annotation file will appear in the Sidebar.
+
+<h2>Directly Link to a language</h2>
+To directly link to a specific language version of an infographic, add the query parameter lang=[lang].
